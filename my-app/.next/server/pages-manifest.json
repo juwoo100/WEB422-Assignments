@@ -1,0 +1,8 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/favourites": "pages/favourites.js",
+  "/works/[workId]": "pages/works/[workId].js",
+  "/books": "pages/books.js"
+}
