@@ -16,19 +16,14 @@ let userSchema = new Schema({
 
 let User;
 
-module.exports.connect = function () {
-    return new Promise(function (resolve, reject) {
-        let db = mongoose.createConnection(mongoDBConnectionString);
-
-        db.on('error', err => {
-            reject(err);
-        });
-
-        db.once('open', () => {
-            User = db.model("users", userSchema);
-            resolve();
-        });
-    });
+module.exports.connect = async function () {
+    try {
+        await mongoose.connect(process.env.MONGO_URL);
+        User = mongoose.model("users", userSchema);
+        return Promise.resolve();
+    } catch (err) {
+        return Promise.reject(err);
+    }
 };
 
 module.exports.registerUser = function (userData) {
@@ -45,7 +40,7 @@ module.exports.registerUser = function (userData) {
                 let newUser = new User(userData);
 
                 newUser.save().then(() => {
-                    resolve("User " + userData.userName + " successfully registered");  
+                    resolve("User " + userData.userName + " successfully registered");
                 }).catch(err => {
                     if (err.code == 11000) {
                         reject("User Name already taken");
