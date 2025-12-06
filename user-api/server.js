@@ -12,6 +12,23 @@ const passportJWT = require('passport-jwt');
 let ExtractJwt = passportJWT.ExtractJwt;
 let JwtStrategy = passportJWT.Strategy;
 
+let jwtOptions = {};
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
+jwtOptions.secretOrKey = process.env.JWT_SECRET;
+
+let strategy = new JwtStrategy(jwtOptions, function (jwt_payload, next) {
+    if (jwt_payload) {
+        next(null, {
+            _id: jwt_payload._id,
+            userName: jwt_payload.userName
+        });
+    } else {
+        next(null, false);
+    }
+});
+
+passport.use(strategy);
+app.use(passport.initialize());
 
 const HTTP_PORT = process.env.PORT || 8080;
 
@@ -30,7 +47,7 @@ app.post("/api/user/register", (req, res) => {
 app.post("/api/user/login", (req, res) => {
     userService.checkUser(req.body)
         .then((user) => {
-            const payload = { _id: user._id, username: user.username };
+            const payload = { _id: user._id, userName: user.userName };
             jwt.sign(payload, process.env.JWT_SECRET, (err, token) => {
                 res.json({ "message": "login successful", "token": token });
             });
