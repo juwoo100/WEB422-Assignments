@@ -2,6 +2,9 @@ my-app/node_modules/
 my-app/.next/
 my-app/.env
 
+user-api/node_modules/
+user-api/.env
+
 .DS_Store
 *.zip
 *.log
